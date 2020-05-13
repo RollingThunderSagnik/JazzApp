@@ -16,7 +16,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Bal chirbi
+          no
         </a>
       </header>
     </div>
