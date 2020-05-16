@@ -1,5 +1,5 @@
 {
-  "name": "hounddog",
+  "name": "jazzapp",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -39,6 +39,6 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/RollingThunderSagnik/JazzApp/issues"
-  },
-  "homepage": "https://github.com/RollingThunderSagnik/JazzApp#readme"
+  }
+  
 }
