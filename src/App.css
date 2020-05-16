@@ -3,6 +3,8 @@
     opacity: 0.5; /* Firefox */
   }
 
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 #chat {
     background: #333333;
     width: 400px;
@@ -11,6 +13,8 @@
     top: 0px;
     display: block;
     height: 100vh;
+    border-left: 4px solid #000;
+    
 }
 #messages{
     width: 100%;
@@ -26,8 +30,9 @@
     list-style-type: none;
     display: block;
     margin: 10px;
-    padding: 10px;
+    padding: 1  px 10px;
     font-size: 20px;
+    font-family: 'VT323', cursive !important;
 }
 #typehold{
     background: #d62267;
@@ -47,8 +52,42 @@
     display: block;
     left: 10px;
     height: 35px;
-    font-family: 'Roboto';
     font-size: 30px;
     outline: none;
     top: 5px;
+    font-family: 'VT323', cursive !important;
+}
+
+#gameBox {
+    position: fixed;
+    background: #589705;
+    width: calc(100% - 400px);
+    height: 100vh;
+    
+}
+
+.character {
+    display: block;
+    position: absolute;
+    background: rgba(0,0,0,0.5);
+    height: 256px;
+    width: 128px;
+}
+
+.character p {
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 32px;
+    padding: 2px 10px;
+    background: #e6c11d;
+    color: #fff;
+    text-align: center;
+    font-family: 'VT323', cursive !important;
+    opacity: 0;
+}
+
+.character:hover p {
+    opacity: 1;
 }

@@ -3,7 +3,6 @@ import logo, { ReactComponent } from './logo.svg';
 import './App.css';
 import ReactDOM from 'react-dom';
 
-
 function App() {
   var tile = 64; 
   class Messages extends React.Component{
@@ -24,8 +23,8 @@ function App() {
   }
 
   var servedMessages = [];
-  function SendMessage(name,str){
-      servedMessages.push(<p>{name + ': '}<i>{str}</i></p>);
+  function SendMessage(str){
+      servedMessages.push(str);
       if(servedMessages.length > 5)
         servedMessages.splice(0,1);
       ReactDOM.render(
@@ -50,7 +49,7 @@ function App() {
     keyPress(e){
       if(e.keyCode == 13)
        {
-        SendMessage(this.state.name,this.state.currentmsg);
+        SendMessage(this.state.name + ": "+ this.state.currentmsg);
         e.target.value = '';
        }
     }
@@ -82,124 +81,71 @@ function App() {
         x : this.props.x,
         y : this.props.y,
         id : this.props.id
-        
       };
-      this.state.charStyle = {
-          left: this.props.x*tile + 'px',
-          top: this.props.y*tile + 'px'
-        }
     }
-
-    componentDidUpdate(prevProps) {
-      // console.log(this.state);
-      // console.log("vs");
-      // console.log(this.props);
-      if (this.props.x !== prevProps.x || this.props.y !== prevProps.y) {
-        this.setState({ 
-          x : this.props.x,
-          y : this.props.y,
-          charStyle : {
-            left: this.props.x*tile + 'px',
-            top: this.props.y*tile + 'px'
-          }
-        });
-      }
-    }
-
-    // move(id){
-    //   //if(this.state.id == id)
-    //     this.setState({
-    //       x : this.state.x
-    //     });
-    // }
     
     render(){
-      
+      let charStyle = {
+        left: this.state.x*tile + 'px',
+        top: this.state.y*tile + 'px'
+      };
       if(this.state.id == "userChar")
         return(
-          <div className="character" style={this.state.charStyle} id="user">
-            <p>{this.state.name.toUpperCase()}</p>
+          <div className="character" style={charStyle} id="user">
+
           </div>
         );
       return(
-          <div className="character" style={this.state.charStyle} >
-            <p>{this.state.name.toUpperCase()}</p>
+          <div className="character" style={charStyle} >
+
           </div>
       );
     }
   }
-  
-  var playersIN = [{
+
+  var players = [{
     name : 'acp',
-    x : 2,
+    x : 0,
     y : 0,
     id : 'main'
   },
   {
-    name : 'daya',
+    name : 'jagori',
     x : 1,
     y : 0,
     id : 'not_main'
-  },
-  
-  // {
-  //   name : '3',
-  //   x : 3,
-  //   y : 4,
-  //   id : 'not_main'
-  // },
-  
-  // {
-  //   name : '4',
-  //   x : 4,
-  //   y : 4,
-  //   id : 'not_main'
-  // },
-  
-  {
-    name : '5',
-    x : 5,
-    y : 4,
-    id : 'not_main'
-  }];
+  }
+  ];
+  var sokcet_id='main';
+
+  function gameKeyPress(e){
+    for(var i=0;i<players.length;i++)
+    {
+      if(players[i].id == sokcet_id)
+        console.log(++players[i].x); 
+    }
+    var karz = players.map( (player) => <Character name={player.name} x={player.x} y={player.y} />);
+    ReactDOM.render(
+      <div>{karz}</div>,
+      document.getElementById('gameBox')
+    );
+  }
 
   class GameBox extends React.Component {
     constructor(props){
       super(props);
       this.keyPress = this.keyPress.bind(this);
-      this.state = {
-        players : this.props.players
-      };
     }
 
     keyPress(e){
-      var playersChanged = this.state.players;
-      for(var i=0;i<playersChanged.length;i++)
-      {
-        if(playersChanged[i].id == 'main')
-        {
-            if(e.keyCode == 39)
-            playersChanged[i].x =playersChanged[i].x+1;
-
-            if(e.keyCode == 37)
-            playersChanged[i].x =playersChanged[i].x-1;
-
-            if(e.keyCode == 38)
-            playersChanged[i].y =playersChanged[i].y-1;
-
-            if(e.keyCode == 40)
-            playersChanged[i].y =playersChanged[i].y+1;
-        }
-      }      
-      this.setState({
-        players : playersChanged
-      });
+      gameKeyPress(e);
+      //alert("kira");
     }
 
     render(){
-      var karz = this.state.players.map( (player) => <Character id={player.id} name={player.name} x={player.x} y={player.y} />);
+      var karz = players.map( (player) => <Character name={player.name} x={player.x} y={player.y} />);
       return(
-        <div id="gameBox" onKeyDown={this.keyPress} tabIndex="0">
+        <div id="gameBox" onClick={this.keyPress} tabIndex="0">
           {karz}
         </div>
       );
@@ -207,8 +153,8 @@ function App() {
   }
   return (
   <div>
-    <GameBox players={playersIN}/>
-    <Chat name="neshakhor raxit"/>
+    <GameBox />
+    <Chat name="haha"/>
   </div>
   
   );
