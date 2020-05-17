@@ -3,9 +3,22 @@ import logo, { ReactComponent } from './logo.svg';
 import './App.css';
 import ReactDOM from 'react-dom';
 
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://127.0.0.1:4001";
+const socket = socketIOClient(ENDPOINT);
+
+
+
+socket.on('connect', () => {
+  const userUnikID = "user_" + socket.id;
+  console.log(userUnikID); // true
+});
+
+
 
 function App() {
   var tile = 64; 
+
   class Messages extends React.Component{
     constructor(props){
       super(props);
@@ -13,6 +26,15 @@ function App() {
         messages : this.props.messages
       }
     }
+
+    componentDidMount(){
+      document.addEventListener('gandu',  (event) => {
+        this.setState({
+          messages : event.detail.barta
+        });
+      });
+    }
+
     render(){
       var msgz = this.state.messages.map( (msg) => <li>{msg}</li>);
       return (
@@ -23,18 +45,12 @@ function App() {
     }
   }
 
-  var servedMessages = [];
-  function SendMessage(name,str){
-      servedMessages.push(<p>{name + ': '}<i>{str}</i></p>);
-      if(servedMessages.length > 5)
-        servedMessages.splice(0,1);
-      ReactDOM.render(
-        // <React.StrictMode>
-        <Messages messages={servedMessages}/>,
-        // </React.StrictMode>,
-        document.getElementById('messageHolder')
-      );
-  }
+  socket.on("receivemessage", (messages) => {
+    //console.log("peyechi ekta message");
+    document.dispatchEvent(new CustomEvent("gandu", {
+      detail: { barta : messages }
+    }));
+  });
 
   class Chat extends React.Component {
     constructor(props){
@@ -43,14 +59,16 @@ function App() {
       this.keyPress = this.keyPress.bind(this);
       this.state = {
         name : this.props.name,
+        messages : [],
         currentmsg : ''
       }
+      console.log("name is: "+this.props.name);
     }
 
     keyPress(e){
       if(e.keyCode == 13)
        {
-        SendMessage(this.state.name,this.state.currentmsg);
+        socket.emit('sendmessage',this.state.name,this.state.currentmsg);
         e.target.value = '';
        }
     }
@@ -60,12 +78,9 @@ function App() {
     }
 
     render(){
-     // var msgz = this.state.messages.map( (msg) => <li>{msg}</li>);
       return (
         <div id="chat">
-          <div id="messageHolder">
-            <Messages messages={servedMessages}/>
-          </div>
+            <Messages messages={this.state.messages}/>
           <div id="typehold">
             <input type="text" onChange={this.handleChange} onKeyDown={this.keyPress} placeholder="enter a message..."></input>
           </div>
@@ -91,9 +106,6 @@ function App() {
     }
 
     componentDidUpdate(prevProps) {
-      // console.log(this.state);
-      // console.log("vs");
-      // console.log(this.props);
       if (this.props.x !== prevProps.x || this.props.y !== prevProps.y) {
         this.setState({ 
           x : this.props.x,
@@ -105,13 +117,6 @@ function App() {
         });
       }
     }
-
-    // move(id){
-    //   //if(this.state.id == id)
-    //     this.setState({
-    //       x : this.state.x
-    //     });
-    // }
     
     render(){
       
@@ -129,40 +134,26 @@ function App() {
     }
   }
   
-  var playersIN = [{
-    name : 'acp',
-    x : 2,
-    y : 0,
-    id : 'main'
-  },
-  {
-    name : 'daya',
-    x : 1,
-    y : 0,
-    id : 'not_main'
-  },
   
-  // {
-  //   name : '3',
-  //   x : 3,
-  //   y : 4,
-  //   id : 'not_main'
-  // },
-  
-  // {
-  //   name : '4',
-  //   x : 4,
-  //   y : 4,
-  //   id : 'not_main'
-  // },
-  
-  {
-    name : '5',
-    x : 5,
-    y : 4,
-    id : 'not_main'
-  }];
+  const userPlayer = {
+    name : prompt("Please enter your name", "Harry Potter"),
+    x : 0,
+    y : 0
+  };
 
+  console.log(userPlayer.name);
+  socket.emit("addplayer",userPlayer);
+  // function newPlayer(name, x, y, id)
+  // {
+
+  // }
+
+  socket.on("changedPlayerPositions", (newPositions) => {
+    console.log(newPositions);
+    document.dispatchEvent(new CustomEvent("updatePos", {
+      detail: { positions : newPositions }
+    }));
+  });
   class GameBox extends React.Component {
     constructor(props){
       super(props);
@@ -172,14 +163,23 @@ function App() {
       };
     }
 
+    componentDidMount(){
+      document.addEventListener('updatePos',  (event) => {
+        this.setState({
+          players : event.detail.positions
+        });
+        // console.log(event.detail.positions);
+      });
+    }
+
     keyPress(e){
       var playersChanged = this.state.players;
       for(var i=0;i<playersChanged.length;i++)
       {
-        if(playersChanged[i].id == 'main')
+        if(playersChanged[i].name == userPlayer.name)
         {
             if(e.keyCode == 39)
-            playersChanged[i].x =playersChanged[i].x+1;
+              playersChanged[i].x =playersChanged[i].x+1;
 
             if(e.keyCode == 37)
             playersChanged[i].x =playersChanged[i].x-1;
@@ -190,10 +190,8 @@ function App() {
             if(e.keyCode == 40)
             playersChanged[i].y =playersChanged[i].y+1;
         }
-      }      
-      this.setState({
-        players : playersChanged
-      });
+      }     
+      socket.emit("changePlayerPositions",playersChanged);
     }
 
     render(){
@@ -204,11 +202,11 @@ function App() {
         </div>
       );
     }
-  }
+  } 
   return (
   <div>
-    <GameBox players={playersIN}/>
-    <Chat name="neshakhor raxit"/>
+    <GameBox players={[]}/>
+    <Chat name={userPlayer.name}/>
   </div>
   
   );
