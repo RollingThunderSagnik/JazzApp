@@ -10,9 +10,12 @@ const server = http.createServer(app);
 
 const io = socketIo(server);
 
-let interval;
-
-var playersIN = [];
+var playersIN = [{
+  name : 'say',
+  x : 0,
+  y: 0,
+  id : 0
+}];
 
 var messages = [];
 
@@ -21,13 +24,33 @@ io.on("connection", (socket) => {
 
   socket.emit("receivemessage",messages);
 
+  socket.on("checkplayer", (newname) => {
+    var x= playersIN.findIndex( (player) => {
+      console.log(player.name + 'vs' + newname);
+
+      console.log(player.name == newname);
+      return (player.name == newname);
+    })
+    if(newname == '')
+      x = 0;
+    socket.emit("playerReadyToAdd",x);
+  });
+
   socket.on("addplayer", (userPlayer) => {
-    playersIN.push(userPlayer);
+    playersIN.push({
+      name : userPlayer.name,
+      x : userPlayer.x,
+      y: userPlayer.y,
+      id : socket.id
+    });
     socket.emit("changedPlayerPositions", playersIN);
   });
 
   socket.on("disconnect", () => {
-    console.log("Client disconnected");
+    var i = playersIN.findIndex((player) => player.id == socket.id);
+    playersIN.splice(i,1);
+    io.emit("changedPlayerPositions", playersIN);
+    console.log("Client"+i +" disconnected");
   });
 
   socket.on("sendmessage",(name,str) => {

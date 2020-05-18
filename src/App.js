@@ -19,6 +19,7 @@ socket.on('connect', () => {
 function App() {
   var tile = 64; 
 
+  
   class Messages extends React.Component{
     constructor(props){
       super(props);
@@ -44,13 +45,6 @@ function App() {
       );
     }
   }
-
-  socket.on("receivemessage", (messages) => {
-    //console.log("peyechi ekta message");
-    document.dispatchEvent(new CustomEvent("gandu", {
-      detail: { barta : messages }
-    }));
-  });
 
   class Chat extends React.Component {
     constructor(props){
@@ -100,19 +94,24 @@ function App() {
         
       };
       this.state.charStyle = {
-          left: this.props.x*tile + 'px',
-          top: this.props.y*tile + 'px'
-        }
+        left: this.props.x*tile + 'px',
+        top: this.props.y*tile + 'px',
+        zIndex: this.props.y
+      }
     }
 
     componentDidUpdate(prevProps) {
-      if (this.props.x !== prevProps.x || this.props.y !== prevProps.y) {
+     // if (this.props.x !== prevProps.x || this.props.y !== prevProps.y) {
+       
+      if (this.props !== prevProps) {
         this.setState({ 
+          name: this.props.name,
           x : this.props.x,
           y : this.props.y,
           charStyle : {
             left: this.props.x*tile + 'px',
-            top: this.props.y*tile + 'px'
+            top: this.props.y*tile + 'px',
+            zIndex: this.props.y
           }
         });
       }
@@ -134,26 +133,6 @@ function App() {
     }
   }
   
-  
-  const userPlayer = {
-    name : prompt("Please enter your name", "Harry Potter"),
-    x : 0,
-    y : 0
-  };
-
-  console.log(userPlayer.name);
-  socket.emit("addplayer",userPlayer);
-  // function newPlayer(name, x, y, id)
-  // {
-
-  // }
-
-  socket.on("changedPlayerPositions", (newPositions) => {
-    console.log(newPositions);
-    document.dispatchEvent(new CustomEvent("updatePos", {
-      detail: { positions : newPositions }
-    }));
-  });
   class GameBox extends React.Component {
     constructor(props){
       super(props);
@@ -203,6 +182,28 @@ function App() {
       );
     }
   } 
+
+
+  socket.on("receivemessage", (messages) => {
+    //console.log("peyechi ekta message");
+    document.dispatchEvent(new CustomEvent("gandu", {
+      detail: { barta : messages }
+    }));
+  });
+
+  /*
+
+  console.log(userPlayer.name);
+  socket.emit("addplayer",userPlayer);
+
+  socket.on("changedPlayerPositions", (newPositions) => {
+    console.log(newPositions);
+    document.dispatchEvent(new CustomEvent("updatePos", {
+      detail: { positions : newPositions }
+    }));
+  });
+
+
   return (
   <div>
     <GameBox players={[]}/>
@@ -210,6 +211,76 @@ function App() {
   </div>
   
   );
+*/
+  var userPlayer = {
+    name : "foo",
+    x : 0,
+    y : 0
+  };
+
+  class PlayerSelection extends React.Component {
+    constructor(props){
+      super(props);
+      this.state = {
+        name : "your name",
+        availability : false
+      }
+      this.handleChange = this.handleChange.bind(this);
+      this.checkVal = this.checkVal.bind(this);
+      this.playerFixed = this.playerFixed.bind(this);
+    }
+
+    handleChange(e) {
+      this.setState({
+        name : e.target.value
+      });
+      socket.emit("checkplayer", e.target.value);
+    }
+
+    componentDidMount(){
+      socket.on("playerReadyToAdd", (x) => {
+        if(x<0)
+          this.setState({
+            availability : true
+          });
+        else
+          this.setState({
+            availability : false
+          });
+      });
+    }
+
+    checkVal(e){
+      var x = e.keyCode;
+      if((x<65 || x>90) && (x<97 || x>122) && x!=8 && (x<37 || x>40) && x!=46)
+       e.preventDefault();
+    }
+
+    playerFixed(){
+      if(this.state.availability)
+        alert("hobe");
+    }
+
+    render()
+    {
+      return (
+      <div id="choosePlayer">
+        <div>
+          <Character x={0} name={this.state.name}/>
+        </div>
+        <div>
+          enter your name:
+          <input type="text" onChange={this.handleChange} onKeyDown={this.checkVal} placeholder="enter a name..."></input>
+          <br /><br />
+          {(this.state.availability ? 'VALID NAME' : 'NOT VALID NAME')}
+          <br />
+          <button onClick={this.playerFixed}>JOIN</button>
+        </div>
+      </div>);
+    }
+  }
+
+  return <PlayerSelection />;
 }
 
 export default App;
