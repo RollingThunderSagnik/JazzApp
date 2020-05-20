@@ -1,8 +1,8 @@
 import React from 'react';
 import logo, { ReactComponent } from './logo.svg';
 import './App.css';
+import './welcome_screen.css';
 import ReactDOM from 'react-dom';
-
 import socketIOClient from "socket.io-client";
 const ENDPOINT = "http://127.0.0.1:4001";
 const socket = socketIOClient(ENDPOINT);
@@ -127,7 +127,7 @@ function App() {
         );
       return(
           <div className="character" style={this.state.charStyle} >
-            <p>{this.state.name.toUpperCase()}</p>
+            <p>{this.state.name}</p>
           </div>
       );
     }
@@ -191,17 +191,18 @@ function App() {
     }));
   });
 
-  /*
-
-  console.log(userPlayer.name);
-  socket.emit("addplayer",userPlayer);
-
   socket.on("changedPlayerPositions", (newPositions) => {
     console.log(newPositions);
     document.dispatchEvent(new CustomEvent("updatePos", {
       detail: { positions : newPositions }
     }));
   });
+  /*
+
+  console.log(userPlayer.name);
+  socket.emit("addplayer",userPlayer);
+
+ 
 
 
   return (
@@ -222,7 +223,7 @@ function App() {
     constructor(props){
       super(props);
       this.state = {
-        name : "your name",
+        name : "TERE NAAM",
         availability : false
       }
       this.handleChange = this.handleChange.bind(this);
@@ -232,7 +233,7 @@ function App() {
 
     handleChange(e) {
       this.setState({
-        name : e.target.value
+        name : ((e.target.value == '') ? 'TERE NAAM' : e.target.value)
       });
       socket.emit("checkplayer", e.target.value);
     }
@@ -258,23 +259,46 @@ function App() {
 
     playerFixed(){
       if(this.state.availability)
-        alert("hobe");
+        {
+          userPlayer = {
+            name : this.state.name,
+            x : 0,
+            y : 0
+          };
+          socket.emit("addplayer",userPlayer);
+
+          
+          ReactDOM.render(
+          <div>
+            <GameBox players={[]}/>
+            <Chat name={userPlayer.name}/>
+          </div>,
+            document.getElementById('root')
+          );
+        }
+
+
     }
 
     render()
     {
       return (
       <div id="choosePlayer">
-        <div>
+        <div id="cha">
           <Character x={0} name={this.state.name}/>
         </div>
-        <div>
+        <div id='details'>
+          <div>
+          
+          <div id='namoagain' className={(this.state.availability ? '' : 'fuckd')}>
           enter your name:
-          <input type="text" onChange={this.handleChange} onKeyDown={this.checkVal} placeholder="enter a name..."></input>
-          <br /><br />
-          {(this.state.availability ? 'VALID NAME' : 'NOT VALID NAME')}
-          <br />
-          <button onClick={this.playerFixed}>JOIN</button>
+          <input type="text" maxlength="10" onChange={this.handleChange} onKeyDown={this.checkVal} placeholder="tere naam..."></input>
+          </div>
+          <hr />
+          <button class='eightbit-btn eightbit-btn--proceed' >{'<< CHANGE AVATAR >>'}</button>
+          <hr />
+          <button class='eightbit-btn' onClick={this.playerFixed}>JOIN</button>
+          </div>
         </div>
       </div>);
     }

@@ -10,12 +10,7 @@ const server = http.createServer(app);
 
 const io = socketIo(server);
 
-var playersIN = [{
-  name : 'say',
-  x : 0,
-  y: 0,
-  id : 0
-}];
+var playersIN = [];
 
 var messages = [];
 
@@ -26,9 +21,9 @@ io.on("connection", (socket) => {
 
   socket.on("checkplayer", (newname) => {
     var x= playersIN.findIndex( (player) => {
-      console.log(player.name + 'vs' + newname);
+      // console.log(player.name + 'vs' + newname);
 
-      console.log(player.name == newname);
+      // console.log(player.name == newname);
       return (player.name == newname);
     })
     if(newname == '')
@@ -43,6 +38,7 @@ io.on("connection", (socket) => {
       y: userPlayer.y,
       id : socket.id
     });
+    console.log(playersIN);
     socket.emit("changedPlayerPositions", playersIN);
   });
 
@@ -62,7 +58,6 @@ io.on("connection", (socket) => {
 
   socket.on("changePlayerPositions", (playersChanged) =>{
     playersIN = [...playersChanged];
-    console.log(playersIN);
     io.emit("changedPlayerPositions", playersIN);
   });
 });

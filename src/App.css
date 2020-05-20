@@ -87,82 +87,34 @@
     text-align: center;
     font-family: 'VT323', monospace !important;
     opacity: 0;
+	box-shadow: inset 0px -4px 0px 0px #E59400;
+    /* margin: 0; */
+}
+
+
+.character p:before, .character p:after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	box-sizing: content-box;
+}
+
+.character p:before {
+	top: -4px;
+	left: 0;
+	border-top: 4px black solid;
+	border-bottom: 4px black solid;
+}
+
+.character p:after {
+	left: -4px;
+	top: 0;
+	border-left: 4px black solid;
+	border-right: 4px black solid;
 }
 
 .character:hover p {
     opacity: 1;
 }
 
-
-#choosePlayer { 
-    font-family: 'VT323', monospace !important;
-    position: absolute;
-    background: #2a84d8;
-    display: block;
-    width: 100vw;
-    height: 100vh;  
-    left:50%;
-    transform: translate(-50%,0);
-    font-size: 30px;
-    line-height: 35px;
-    color: #fff;
-}
-
-/* #choosePlayer div .character {
-    transform: scale(2);
-} */
-
-#choosePlayer div .character p{
-    opacity: 1;
-}
-
-#choosePlayer div:first-child{
-    position: absolute;
-    display: block;
-    left: 50%;
-    top: 32px;
-    transform: translate(-50%,0);
-}
-
-#choosePlayer > div:last-child{
-    position: absolute;
-    display: block;
-    width: 100%;
-    bottom: calc( (100vh - 356px) / 2 );
-    text-align: center;
-    transform: translate(0,50%);
-}
-
-
-#choosePlayer input[type="text"]{
-    color: #fff;
-    background: transparent;
-    border: 0;
-    border-bottom: 2px solid #fff;
-    position: relative;
-    display: inline-block;
-    width: 256px;
-    left: 10px;
-    height: 35px;
-    font-size: 30px;
-    outline: none;
-    font-family: 'VT323', monospace !important;
-}
-
-#choosePlayer button {
-    color: #fff;
-    border: 4px solid #a78d19;
-    background: #e6c11d;
-    display: inline-block;
-    margin: 20px;
-    padding: 7px 14px;
-    font-size: 30px;
-    outline: none;
-    font-family: 'VT323', monospace !important;
-    cursor: pointer;
-}
-
-#choosePlayer button:hover {
-    border: 4px solid #a78d19;
-    background:  #caab1e;
-}
