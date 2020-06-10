@@ -2,8 +2,9 @@
 #choosePlayer { 
     font-family: 'VT323', monospace !important;
     position: absolute;
+    background-image:url('./images/sky.jpg');
 
-    background:url('./images/sky.jpg');
+    /* background: rgba(0,0,0,0.5);  */
     /* background: #2a84d8; */
     display: block;
     width: 100vw;
@@ -47,7 +48,7 @@
 #cha .character {
     left: 50% !important;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%) !important;
 }
 
 #details{
@@ -71,7 +72,7 @@
     border: 0;
     position: relative;
     display: inline-block;
-    width: 256px;
+    width: 150px;
     height: 35px;
     font-size: 30px;
     outline: none;
@@ -199,7 +200,7 @@ hr {
 	display: block;
 	height: 1px;
 	border: 0;
-	border-top: 1px solid #ccc;
+	border-top: 2px solid #000;
 	padding: 0;
 }
 

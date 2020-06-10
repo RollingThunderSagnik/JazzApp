@@ -69,14 +69,60 @@
 .character {
     display: block;
     position: absolute;
-    background: rgba(0,0,0,0.5);
-    height: 256px;
-    width: 128px;
+    background-image: url('./images/player_sprites/doomer.png');
+    background-position: top left;
+    background-size: cover;
+    image-rendering: pixelated;
+    width: 88px;
+    height: 240px;
+    animation: moveX 0.5s steps(2) infinite;
 }
 
+.character.doomer {
+    background-image: url('./images/player_sprites/doomer.png');
+}
+
+.character.nerd {
+    background-image: url('./images/player_sprites/nerd.png');
+}
+
+.character.lib {
+    background-image: url('./images/player_sprites/lib.png');
+}
+
+.character.ladis {
+    background-image: url('./images/player_sprites/ladis.png');
+}
+
+.character.moist {
+    background-image: url('./images/player_sprites/moist.png');
+}
+
+.character.bhakt {
+    background-image: url('./images/player_sprites/bhakt.png');
+}
+
+@keyframes moveX{
+    from{background-position-x:0px;}
+    to{background-position-x: 176px;}
+  }
+
+.character p b{
+    font-weight: normal;
+    position: relative;
+    display: inline-block;
+}
+
+.character.fleft {
+    transform : scaleX(-1);
+}
+
+.character.fleft p b {
+    transform : scaleX(-1);
+}
 .character p {
     position: absolute;
-    top: -32px;
+    top: -50px;
     left: 50%;
     transform: translate(-50%,-50%);
     font-size: 32px;

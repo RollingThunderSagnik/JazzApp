@@ -17,9 +17,9 @@ socket.on('connect', () => {
 
 
 function App() {
-  var tile = 64; 
+  var tile = 40; 
 
-  
+
   class Messages extends React.Component{
     constructor(props){
       super(props);
@@ -90,13 +90,15 @@ function App() {
         name: this.props.name,
         x : this.props.x,
         y : this.props.y,
-        id : this.props.id
-        
+        id : this.props.id,
+        fLeft : this.props.fLeft,
+        avatar : this.props.avatar
       };
       this.state.charStyle = {
         left: this.props.x*tile + 'px',
         top: this.props.y*tile + 'px',
-        zIndex: this.props.y
+        zIndex: this.props.y,
+        transform : 'scaleX('+ this.props.fLeft +')'
       }
     }
 
@@ -108,6 +110,8 @@ function App() {
           name: this.props.name,
           x : this.props.x,
           y : this.props.y,
+          fLeft : this.props.fLeft,
+          avatar : this.props.avatar,
           charStyle : {
             left: this.props.x*tile + 'px',
             top: this.props.y*tile + 'px',
@@ -118,16 +122,24 @@ function App() {
     }
     
     render(){
+      var clasist = "character";
+      if(this.state.fLeft == -1)
+        clasist += " fleft";
       
-      if(this.state.id == "userChar")
-        return(
-          <div className="character" style={this.state.charStyle} id="user">
-            <p>{this.state.name.toUpperCase()}</p>
-          </div>
-        );
+      switch(this.state.avatar)
+      {
+        case 0: clasist += " doomer"; break;
+        case 1: clasist += " bhakt"; break;
+        case 2: clasist += " moist"; break;
+        case 3: clasist += " ladis"; break;
+        case 4: clasist += " nerd"; break;
+        case 5: clasist += " lib"; break; 
+      }
+      
+
       return(
-          <div className="character" style={this.state.charStyle} >
-            <p>{this.state.name}</p>
+          <div className={clasist} style={this.state.charStyle} >
+            <p><b>{this.state.name}</b></p>
           </div>
       );
     }
@@ -153,28 +165,39 @@ function App() {
 
     keyPress(e){
       var playersChanged = this.state.players;
-      for(var i=0;i<playersChanged.length;i++)
+      var i;
+      for(i=0;i<playersChanged.length;i++)
       {
         if(playersChanged[i].name == userPlayer.name)
-        {
-            if(e.keyCode == 39)
-              playersChanged[i].x =playersChanged[i].x+1;
+        { break;}
+      }
 
-            if(e.keyCode == 37)
-            playersChanged[i].x =playersChanged[i].x-1;
+      if(e.keyCode == 39)
+      { 
+        if(playersChanged[i].fLeft == 1)
+          { playersChanged[i].x = playersChanged[i].x+1;}
+        playersChanged[i].fLeft = 1;
+      }
 
-            if(e.keyCode == 38)
-            playersChanged[i].y =playersChanged[i].y-1;
+      if(e.keyCode == 37)
+      {
+        if(playersChanged[i].fLeft == -1)
+          { playersChanged[i].x = playersChanged[i].x-1;}
+        playersChanged[i].fLeft = -1;
+      }
 
-            if(e.keyCode == 40)
-            playersChanged[i].y =playersChanged[i].y+1;
-        }
-      }     
+      if(e.keyCode == 38)
+      playersChanged[i].y =playersChanged[i].y-1;
+
+      if(e.keyCode == 40)
+      playersChanged[i].y =playersChanged[i].y+1;
+
+      
       socket.emit("changePlayerPositions",playersChanged);
     }
 
     render(){
-      var karz = this.state.players.map( (player) => <Character id={player.id} name={player.name} x={player.x} y={player.y} />);
+      var karz = this.state.players.map( (player) => <Character id={player.id} avatar={player.avatar} name={player.name} x={player.x} y={player.y} fLeft={player.fLeft} />);
       return(
         <div id="gameBox" onKeyDown={this.keyPress} tabIndex="0">
           {karz}
@@ -223,17 +246,19 @@ function App() {
     constructor(props){
       super(props);
       this.state = {
-        name : "TERE NAAM",
-        availability : false
+        name : "TERE_NAAM",
+        availability : false,
+        type : 0
       }
       this.handleChange = this.handleChange.bind(this);
       this.checkVal = this.checkVal.bind(this);
       this.playerFixed = this.playerFixed.bind(this);
+      this.setAvatar = this.setAvatar.bind(this);
     }
 
     handleChange(e) {
       this.setState({
-        name : ((e.target.value == '') ? 'TERE NAAM' : e.target.value)
+        name : ((e.target.value == '') ? 'TERE_NAAM' : e.target.value)
       });
       socket.emit("checkplayer", e.target.value);
     }
@@ -263,7 +288,9 @@ function App() {
           userPlayer = {
             name : this.state.name,
             x : 0,
-            y : 0
+            y : 0,
+            fLeft : 1,
+            avatar : this.state.type
           };
           socket.emit("addplayer",userPlayer);
 
@@ -276,8 +303,13 @@ function App() {
             document.getElementById('root')
           );
         }
+    }
 
-
+    setAvatar(){
+      this.setState({
+        type : (this.state.type + 1)%6
+      });
+      console.log(this.state.type);
     }
 
     render()
@@ -285,19 +317,23 @@ function App() {
       return (
       <div id="choosePlayer">
         <div id="cha">
-          <Character x={0} name={this.state.name}/>
+          <Character x={0} avatar={this.state.type} fLeft={1} name={this.state.name}/>
         </div>
         <div id='details'>
           <div>
           
-          <div id='namoagain' className={(this.state.availability ? '' : 'fuckd')}>
-          enter your name:
-          <input type="text" maxlength="10" onChange={this.handleChange} onKeyDown={this.checkVal} placeholder="tere naam..."></input>
-          </div>
-          <hr />
-          <button class='eightbit-btn eightbit-btn--proceed' >{'<< CHANGE AVATAR >>'}</button>
-          <hr />
-          <button class='eightbit-btn' onClick={this.playerFixed}>JOIN</button>
+            <div id='namoagain' className={(this.state.availability ? '' : 'fuckd')}>
+              enter your name:
+              <input type="text" maxlength="10" onChange={this.handleChange} onKeyDown={this.checkVal} placeholder="tere naam..."></input>
+            </div>
+
+            <hr />
+
+            <button class='eightbit-btn eightbit-btn--proceed' onClick={this.setAvatar} >{'<< CHANGE AVATAR >>'}</button>
+            
+            <hr />
+            
+            <button class='eightbit-btn' onClick={this.playerFixed}>JOIN</button>
           </div>
         </div>
       </div>);

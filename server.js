@@ -36,6 +36,8 @@ io.on("connection", (socket) => {
       name : userPlayer.name,
       x : userPlayer.x,
       y: userPlayer.y,
+      fLeft : userPlayer.fLeft,
+      avatar : userPlayer.avatar,
       id : socket.id
     });
     console.log(playersIN);

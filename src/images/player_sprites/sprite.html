@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> 
+.myDIV {
+    position: relative;
+    top: 30vh;
+    display: block;
+    float: left;
+    width: 88px;
+    height: 240px;
+    background-image: url('file:///D:/Actual%20Desktop/the%208b%20life/moist/Untitled-1.jpg');
+    background-position: top left;
+    background-size: cover;
+    image-rendering: pixelated;
+    margin: 50px 50px;
+    animation: moveX 0.5s steps(2) infinite;
+}
+
+    #sexDIV{
+        width: 280px;
+        height: 440px;
+        background-image: url('file:///D:/Actual%20Desktop/the%208b%20life/tree.png');
+        background-size: cover;
+        position: absolute;
+        top:50%;
+        left: 75%;
+        transform: translate(0%,-75%);
+        
+    image-rendering: pixelated;
+        
+    }
+    
+    #tequip{
+        width: 1440px;
+        height: 480px;
+        background-image: url('file:///D:/Actual%20Desktop/the%208b%20life/export%20size/teqip_new.png');
+        background-size: cover;
+        position: absolute;
+        image-rendering: pixelated;
+    }
+    
+    html,body{
+        background: url('gravel.png');
+        background-size: 40px 40px;
+        image-rendering: pixelated;
+        margin: 0px;
+/*            #589705*/
+/*            #312f5f;*/
+    }
+    
+    #moistDIV {
+        background-image: url('moist.png');
+    }
+    
+    #doomerDIV {
+        background-image: url('doomer.png');
+    }
+    
+    #nerdDIV {
+        background-image: url('nerd.png');
+    }
+    
+    #bhaktDIV {
+        background-image: url('bhakt.png');
+    }
+    
+    #ladisDIV {
+        background-image: url('ladis.png');
+    }
+    
+    #libDIV {
+        background-image: url('lib.png');
+    }
+
+@keyframes moveX{
+      from{background-position-x:0px;}
+      to{background-position-x: 176px;}
+    }
+</style>
+</head>
+<body>
+
+<div id="tequip"></div>
+<div id="sexDIV"></div>
+    
+    <div class="myDIV" id="moistDIV"></div>
+    
+    <div class="myDIV" id="doomerDIV"></div>
+    
+    <div class="myDIV" id="nerdDIV"></div>
+    
+    <div class="myDIV" id="bhaktDIV"></div>
+    
+    <div class="myDIV" id="ladisDIV"></div>
+    
+    <div class="myDIV" id="libDIV"></div>
+
+    <script>
+        window.onload = function(){
+            var x=0;
+            var z = [1,2]
+            var bhakt = document.getElementById("bhaktDIV");
+            
+            var ladis = document.getElementById("ladisDIV");
+            
+            var nerd = document.getElementById("nerdDIV");
+            
+            var doomer = document.getElementById("doomerDIV");
+            
+            var moist = document.getElementById("moistDIV");
+            var lib = document.getElementById("libDIV");
+            
+          document.getElementsByTagName("body")[0].onkeydown = function(ev){
+//              alert(ev.keyCode);
+             
+              if(ev.keyCode == 37){
+                  bhakt.style.transform = "scaleX(-1)";
+                  window.setTimeout( () => doomer.style.transform = "scaleX(-1)", 250);
+                  
+                  window.setTimeout( () => nerd.style.transform = "scaleX(-1)", 500);
+                  
+                  window.setTimeout( () => moist.style.transform = "scaleX(-1)", 750);
+                  
+                  window.setTimeout( () => ladis.style.transform = "scaleX(-1)", 1000);
+                  
+                  
+                  window.setTimeout( () => lib.style.transform = "scaleX(-1)", 1250);
+              }
+              if(ev.keyCode == 39){
+                  bhakt.style.transform = "scaleX(1)";
+                  window.setTimeout( () => doomer.style.transform = "scaleX(1)", 250);
+                  
+                  window.setTimeout( () => nerd.style.transform = "scaleX(1)", 500);
+                  
+                  window.setTimeout( () => moist.style.transform = "scaleX(1)", 750);
+                
+                  window.setTimeout( () => ladis.style.transform = "scaleX(1)", 1000);
+                  
+                  window.setTimeout( () => lib.style.transform = "scaleX(1)", 1250);
+              }
+          };
+        };
+    </script>
+</body>
+</html>
