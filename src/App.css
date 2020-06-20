@@ -63,7 +63,19 @@
     background: #589705;
     width: calc(100% - 400px);
     height: 100vh;
-    
+}
+
+#gameWorld {
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    top: 0px;
+    left: 0px;
+    width: 5400px;
+    height: 2600px;
+    background-image:url('./images/game_world.png');
+    background-size: cover;
+    image-rendering: pixelated;
 }
 
 .character {
@@ -72,10 +84,15 @@
     background-image: url('./images/player_sprites/doomer.png');
     background-position: top left;
     background-size: cover;
-    image-rendering: pixelated;
     width: 88px;
     height: 240px;
     animation: moveX 0.5s steps(2) infinite;
+}
+
+*{
+    image-rendering: pixelated !important;
+    image-rendering: -moz-crisp-edges !important;
+    image-rendering: crisp-edges !important;
 }
 
 .character.doomer {

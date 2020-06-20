@@ -56,7 +56,7 @@ function App() {
         messages : [],
         currentmsg : ''
       }
-      console.log("name is: "+this.props.name);
+      //console.log("name is: "+this.props.name);
     }
 
     keyPress(e){
@@ -150,8 +150,15 @@ function App() {
       super(props);
       this.keyPress = this.keyPress.bind(this);
       this.state = {
-        players : this.props.players
+        players : this.props.players,
+        worldStyle : {
+          left: '0px',
+          top: '0px'
+        },
+        worldX : 0,
+        worldY : 0
       };
+      this.moveCam = this.moveCam.bind(this);
     }
 
     componentDidMount(){
@@ -171,6 +178,9 @@ function App() {
         if(playersChanged[i].name == userPlayer.name)
         { break;}
       }
+
+      var ox = playersChanged[i].x;
+      var oy = playersChanged[i].y;
 
       if(e.keyCode == 39)
       { 
@@ -192,15 +202,51 @@ function App() {
       if(e.keyCode == 40)
       playersChanged[i].y =playersChanged[i].y+1;
 
+      var nx = playersChanged[i].x;
+      var ny = playersChanged[i].y;
+      if(nx < 0 || ny < 0 || nx > 131 || ny > 58)
+      {
+        playersChanged[i].x = ox;
+        playersChanged[i].y = oy;
+      }
+      else 
+      {
+        this.moveCam(nx,ny);
+        socket.emit("changePlayerPositions",playersChanged);
+      }
+    }
+
+    moveCam(x,y){
+      x = x * 40 + this.state.worldX;
+      y = y * 40 + this.state.worldY;
+      if(x > window.screen.availWidth * 0.6)
+        this.state.worldX = this.state.worldX - 40;
       
-      socket.emit("changePlayerPositions",playersChanged);
+      if((y + 240) > window.innerHeight)
+        this.state.worldY = this.state.worldY - 40;
+
+      if(x < 0)
+        this.state.worldX = this.state.worldX + 40;
+
+      if(y < 0)
+        this.state.worldY = this.state.worldY + 40;
+      
+      this.setState({
+        worldStyle : {
+          top : this.state.worldY +'px',
+          left : this.state.worldX +'px'
+        }
+      });
+      console.log(x + " " + y);
     }
 
     render(){
       var karz = this.state.players.map( (player) => <Character id={player.id} avatar={player.avatar} name={player.name} x={player.x} y={player.y} fLeft={player.fLeft} />);
       return(
-        <div id="gameBox" onKeyDown={this.keyPress} tabIndex="0">
+        <div id="gameBox" onKeyUp={this.keyPress} tabIndex="0">
+          <div id="gameWorld" style={this.state.worldStyle}>
           {karz}
+          </div>
         </div>
       );
     }
@@ -215,7 +261,7 @@ function App() {
   });
 
   socket.on("changedPlayerPositions", (newPositions) => {
-    console.log(newPositions);
+    //console.log(newPositions);
     document.dispatchEvent(new CustomEvent("updatePos", {
       detail: { positions : newPositions }
     }));
@@ -309,7 +355,7 @@ function App() {
       this.setState({
         type : (this.state.type + 1)%6
       });
-      console.log(this.state.type);
+      //console.log(this.state.type);
     }
 
     render()
