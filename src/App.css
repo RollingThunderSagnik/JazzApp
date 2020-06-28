@@ -4,17 +4,20 @@
   }
 
   @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
+* {
+    border: 0;
+    outline: none;
+}
 #chat {
     background: #333333;
     width: 400px;
-    position: fixed;
+    position: absolute;
     right: 0px;
     top: 0px;
     display: block;
     height: 100vh;
     border-left: 4px solid #000;
-    
+    z-index: -1;
 }
 #messages{
     width: 100%;
@@ -61,8 +64,10 @@
 #gameBox {
     position: fixed;
     background: #589705;
-    width: calc(100% - 400px);
+    width: calc(100% - 404px);
     height: 100vh;
+    overflow: hidden;
+    border-right: 4px solid #000;
 }
 
 #gameWorld {
@@ -76,6 +81,35 @@
     background-image:url('./images/game_world.png');
     background-size: cover;
     image-rendering: pixelated;
+}
+
+#joyraj {
+    width: 200px;
+    height: 200px;
+    position: fixed;
+    top:0px;
+    right: 100px;
+    display: block;
+    z-index: 9999 !important ;
+}
+
+/* #joyDiv {
+    position: relative;
+    left: 100px;
+} */
+
+.grid {
+    position: absolute;
+    display: block;
+    background: rgba(255,255,255,0);
+    color: #fff;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    z-index: 999;
+    text-align: center;
+    box-shadow:0px 0px 1px 1px #000 inset;  
+    font-size: x-small;
 }
 
 .character {

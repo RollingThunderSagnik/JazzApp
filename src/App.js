@@ -3,6 +3,7 @@ import logo, { ReactComponent } from './logo.svg';
 import './App.css';
 import './welcome_screen.css';
 import ReactDOM from 'react-dom';
+import './joy.js';
 import socketIOClient from "socket.io-client";
 const ENDPOINT = "http://127.0.0.1:4001";
 const socket = socketIOClient(ENDPOINT);
@@ -14,12 +15,359 @@ socket.on('connect', () => {
   console.log(userUnikID); // true
 });
 
+var JoyStick = (function(container, parameters)
+    {
+      parameters = parameters || {};
+      var title = (typeof parameters.title === "undefined" ? "joystick" : parameters.title),
+        width = (typeof parameters.width === "undefined" ? 0 : parameters.width),
+        height = (typeof parameters.height === "undefined" ? 0 : parameters.height),
+        internalFillColor = (typeof parameters.internalFillColor === "undefined" ? "#00AA00" : parameters.internalFillColor),
+        internalLineWidth = (typeof parameters.internalLineWidth === "undefined" ? 2 : parameters.internalLineWidth),
+        internalStrokeColor = (typeof parameters.internalStrokeColor === "undefined" ? "#003300" : parameters.internalStrokeColor),
+        externalLineWidth = (typeof parameters.externalLineWidth === "undefined" ? 2 : parameters.externalLineWidth),
+        externalStrokeColor = (typeof parameters.externalStrokeColor ===  "undefined" ? "#008000" : parameters.externalStrokeColor),
+        autoReturnToCenter = (typeof parameters.autoReturnToCenter === "undefined" ? true : parameters.autoReturnToCenter);
+      
+      // Create Canvas element and add it in the Container object
+      var objContainer = document.getElementById(container);
+      var canvas = document.createElement("canvas");
+      canvas.id = title;
+      if(width === 0) { width = objContainer.clientWidth; }
+      if(height === 0) { height = objContainer.clientHeight; }
+      canvas.width = width;
+      canvas.height = height;
+      objContainer.appendChild(canvas);
+      var context=canvas.getContext("2d");
+      
+      var pressed = 0; // Bool - 1=Yes - 0=No
+        var circumference = 2 * Math.PI;
+        var internalRadius = (canvas.width-((canvas.width/2)+10))/2;
+      var maxMoveStick = internalRadius + 5;
+      var externalRadius = internalRadius + 30;
+      var centerX = canvas.width / 2;
+      var centerY = canvas.height / 2;
+      var directionHorizontalLimitPos = canvas.width / 10;
+      var directionHorizontalLimitNeg = directionHorizontalLimitPos * -1;
+      var directionVerticalLimitPos = canvas.height / 10;
+      var directionVerticalLimitNeg = directionVerticalLimitPos * -1;
+      // Used to save current position of stick
+      var movedX=centerX;
+      var movedY=centerY;
+        
+      // Check if the device support the touch or not
+      if("ontouchstart" in document.documentElement)
+      {
+        canvas.addEventListener("touchstart", onTouchStart, false);
+        canvas.addEventListener("touchmove", onTouchMove, false);
+        canvas.addEventListener("touchend", onTouchEnd, false);
+      }
+      else
+      {
+        canvas.addEventListener("mousedown", onMouseDown, false);
+        canvas.addEventListener("mousemove", onMouseMove, false);
+        canvas.addEventListener("mouseup", onMouseUp, false);
+      }
+      // Draw the object
+      drawExternal();
+      drawInternal();
+    
+      /******************************************************
+       * Private methods
+       *****************************************************/
+    
+      /**
+       * @desc Draw the external circle used as reference position
+       */
+      function drawExternal()
+      {
+        context.beginPath();
+        context.arc(centerX, centerY, externalRadius, 0, circumference, false);
+        context.lineWidth = externalLineWidth;
+        context.strokeStyle = externalStrokeColor;
+        context.stroke();
+      }
+    
+      /**
+       * @desc Draw the internal stick in the current position the user have moved it
+       */
+      function drawInternal()
+      {
+        context.beginPath();
+        if(movedX<internalRadius) { movedX=maxMoveStick; }
+        if((movedX+internalRadius) > canvas.width) { movedX = canvas.width-(maxMoveStick); }
+        if(movedY<internalRadius) { movedY=maxMoveStick; }
+        if((movedY+internalRadius) > canvas.height) { movedY = canvas.height-(maxMoveStick); }
+        context.arc(movedX, movedY, internalRadius, 0, circumference, false);
+        // create radial gradient
+        var grd = context.createRadialGradient(centerX, centerY, 5, centerX, centerY, 200);
+        // Light color
+        grd.addColorStop(0, internalFillColor);
+        // Dark color
+        grd.addColorStop(1, internalStrokeColor);
+        context.fillStyle = grd;
+        context.fill();
+        context.lineWidth = internalLineWidth;
+        context.strokeStyle = internalStrokeColor;
+        context.stroke();
+      }
+      
+      /**
+       * @desc Events for manage touch
+       */
+      function onTouchStart(event) 
+      {
+        pressed = 1;
+      }
+    
+      function onTouchMove(event)
+      {
+        // Prevent the browser from doing its default thing (scroll, zoom)
+        event.preventDefault();
+        if(pressed === 1 && event.targetTouches[0].target === canvas)
+        {
+          movedX = event.targetTouches[0].pageX;
+          movedY = event.targetTouches[0].pageY;
+          // Manage offset
+          if(canvas.offsetParent.tagName.toUpperCase() === "BODY")
+          {
+            movedX -= canvas.offsetLeft;
+            movedY -= canvas.offsetTop;
+          }
+          else
+          {
+            movedX -= canvas.offsetParent.offsetLeft;
+            movedY -= canvas.offsetParent.offsetTop;
+          }
+          // Delete canvas
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          // Redraw object
+          drawExternal();
+          drawInternal();
+        }
+      } 
+    
+      function onTouchEnd(event) 
+      {
+        pressed = 0;
+        // If required reset position store variable
+        if(autoReturnToCenter)
+        {
+          movedX = centerX;
+          movedY = centerY;
+        }
+        // Delete canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        // Redraw object
+        drawExternal();
+        drawInternal();
+        //canvas.unbind('touchmove');
+      }
+    
+      /**
+       * @desc Events for manage mouse
+       */
+      function onMouseDown(event) 
+      {
+        pressed = 1;
+      }
+    
+      function onMouseMove(event) 
+      {
+        if(pressed === 1)
+        {
+          movedX = event.pageX;
+          movedY = event.pageY;
+          // Manage offset
+          if(canvas.offsetParent.tagName.toUpperCase() === "BODY")
+          {
+            movedX -= canvas.offsetLeft;
+            movedY -= canvas.offsetTop;
+          }
+          else
+          {
+            movedX -= canvas.offsetParent.offsetLeft;
+            movedY -= canvas.offsetParent.offsetTop;
+          }
+          // Delete canvas
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          // Redraw object
+          drawExternal();
+          drawInternal();
+        }
+      }
+    
+      function onMouseUp(event) 
+      {
+        pressed = 0;
+        // If required reset position store variable
+        if(autoReturnToCenter)
+        {
+          movedX = centerX;
+          movedY = centerY;
+        }
+        // Delete canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        // Redraw object
+        drawExternal();
+        drawInternal();
+        //canvas.unbind('mousemove');
+      }
+    
+      /******************************************************
+       * Public methods
+       *****************************************************/
+      
+      /**
+       * @desc The width of canvas
+       * @return Number of pixel width 
+       */
+      this.GetWidth = function () 
+      {
+        return canvas.width;
+      };
+      
+      /**
+       * @desc The height of canvas
+       * @return Number of pixel height
+       */
+      this.GetHeight = function () 
+      {
+        return canvas.height;
+      };
+      
+      /**
+       * @desc The X position of the cursor relative to the canvas that contains it and to its dimensions
+       * @return Number that indicate relative position
+       */
+      this.GetPosX = function ()
+      {
+        return movedX;
+      };
+      
+      /**
+       * @desc The Y position of the cursor relative to the canvas that contains it and to its dimensions
+       * @return Number that indicate relative position
+       */
+      this.GetPosY = function ()
+      {
+        return movedY;
+      };
+      
+      /**
+       * @desc Normalizzed value of X move of stick
+       * @return Integer from -100 to +100
+       */
+      this.GetX = function ()
+      {
+        return (100*((movedX - centerX)/maxMoveStick)).toFixed();
+      };
+    
+      /**
+       * @desc Normalizzed value of Y move of stick
+       * @return Integer from -100 to +100
+       */
+      this.GetY = function ()
+      {
+        return ((100*((movedY - centerY)/maxMoveStick))*-1).toFixed();
+      };
+      
+      /**
+       * @desc Get the direction of the cursor as a string that indicates the cardinal points where this is oriented
+       * @return String of cardinal point N, NE, E, SE, S, SW, W, NW and C when it is placed in the center
+       */
+      this.GetDir = function()
+      {
+        var result = "";
+        var orizontal = movedX - centerX;
+        var vertical = movedY - centerY;
+        
+        if(vertical >= directionVerticalLimitNeg && vertical <= directionVerticalLimitPos)
+        {
+          result = "C";
+        }
+        if(vertical < directionVerticalLimitNeg)
+        {
+          result = "N";
+        }
+        if(vertical > directionVerticalLimitPos)
+        {
+          result = "S";
+        }
+        
+        if(orizontal < directionHorizontalLimitNeg)
+        {
+          if(result === "C")
+          { 
+            result = "W";
+          }
+          else
+          {
+            result += "W";
+          }
+        }
+        if(orizontal > directionHorizontalLimitPos)
+        {
+          if(result === "C")
+          { 
+            result = "E";
+          }
+          else
+          {
+            result += "E";
+          }
+        }
+        
+        return result;
+      };
+    });
 
+/*
+
+aahar big bench
+1,38 - 13,38
+1,39 - 1,42, 13,39 - 13,42
+1,43 - 13,43
+
+aahar small bench
+0,46 - 14,46
+0,47; 14,47; 15,47; 15,48
+0,48 - 14,48
+
+aahar gol bench
+20,40 - 20,44
+20,45 - 24,45
+25,44 - 25,40
+21,40 - 24,40
+
+
+
+
+
+*/
 
 function App() {
   var tile = 40; 
 
 
+  class Grid extends React.Component{
+    constructor(props){
+      super(props);
+    }
+
+    render()
+    {
+      var haha=[];
+      for(var i=0;i<=135;i++)
+        for(var j=0;j<=65;j++)
+        { var gstyle = {
+          left: i*40 + "px",
+          top: j*40 + "px",
+          };
+          haha.push(<div class="grid" style={gstyle}>{i+","+j}</div>);
+        }
+      return <div>{haha}</div>;
+    }
+  }
   class Messages extends React.Component{
     constructor(props){
       super(props);
@@ -151,12 +499,12 @@ function App() {
       this.keyPress = this.keyPress.bind(this);
       this.state = {
         players : this.props.players,
+        worldX : -1320,
+        worldY : -40,
         worldStyle : {
-          left: '0px',
-          top: '0px'
-        },
-        worldX : 0,
-        worldY : 0
+          top : '-40px',
+          left : '-1320px'
+        }
       };
       this.moveCam = this.moveCam.bind(this);
     }
@@ -166,8 +514,30 @@ function App() {
         this.setState({
           players : event.detail.positions
         });
-        // console.log(event.detail.positions);
       });
+
+      document.addEventListener('thirdeye',  (event) => {
+        var eyex = event.detail.x + this.state.worldX;
+        var eyey = event.detail.y + this.state.worldY;
+
+        if(eyex >= 0 )
+          eyex = this.state.worldStyle.left;
+        else
+          eyex = eyex;
+        
+        if(eyey >= 0 )
+          eyey = this.state.worldStyle.top;
+        else
+          eyey = eyey;
+          
+        this.setState({
+          worldStyle : {
+            left : eyex,
+            top : eyey
+          }
+        });
+      });
+
     }
 
     keyPress(e){
@@ -204,7 +574,7 @@ function App() {
 
       var nx = playersChanged[i].x;
       var ny = playersChanged[i].y;
-      if(nx < 0 || ny < 0 || nx > 131 || ny > 58)
+      if(!this.checkValidPosition(nx,ny))
       {
         playersChanged[i].x = ox;
         playersChanged[i].y = oy;
@@ -216,10 +586,17 @@ function App() {
       }
     }
 
+    checkValidPosition(x,y)
+    {
+      if(x < 0 || y < 0 || x > 131 || y > 58)
+        return false;
+      return true;
+    }
+
     moveCam(x,y){
       x = x * 40 + this.state.worldX;
       y = y * 40 + this.state.worldY;
-      if(x > window.screen.availWidth * 0.6)
+      if((x+88) > (window.innerWidth-400))
         this.state.worldX = this.state.worldX - 40;
       
       if((y + 240) > window.innerHeight)
@@ -237,7 +614,7 @@ function App() {
           left : this.state.worldX +'px'
         }
       });
-      console.log(x + " " + y);
+      console.log(this.state.worldX + " " + this.state.worldY);
     }
 
     render(){
@@ -245,13 +622,103 @@ function App() {
       return(
         <div id="gameBox" onKeyUp={this.keyPress} tabIndex="0">
           <div id="gameWorld" style={this.state.worldStyle}>
+            {/* <Grid /> */}
           {karz}
           </div>
+          <Joysticc/>
         </div>
       );
     }
   } 
+  var joy;
+  class Joysticc extends React.Component {
+   constructor(props){
+     super(props);
+     this.joymosti = this.joymosti.bind(this);
+     this.state = {
+       x:0,
+       y:0
+     }
+     this.backtobessa = this.backtobessa.bind(this);
+   }
+   
+   componentDidMount(){
+    joy = new JoyStick('joyDiv',{
 
+      // The ID of canvas element
+      title: 'joystick',
+      
+      // width/height
+      width: 200,
+      height: 200,
+      
+      // Internal color of Stick
+      internalFillColor: '#ffffff',
+      
+      // Border width of Stick
+      internalLineWidth: 2,
+      
+      // Border color of Stick
+      internalStrokeColor: '#ffffff',
+      
+      // External reference circonference width
+      externalLineWidth: 2,
+      
+      //External reference circonference color
+      externalStrokeColor: '#ffffff',
+      
+      // Sets the behavior of the stick
+      autoReturnToCenter: true
+      
+      });
+   }
+
+   joymosti(){
+    var newx = joy.GetX()*4;
+    var newy = joy.GetY()*4;
+
+    // if( newx != this.state.x || newy != this.state.y )
+    // {
+      this.setState({
+        x: newx,
+        y: newy
+      });
+      document.dispatchEvent(new CustomEvent("thirdeye", {
+           detail: 
+           {
+           x : this.state.x*-1,
+           y : this.state.y
+           }
+      }));
+    // }
+    
+    // document.dispatchEvent(new CustomEvent("updatePos", {
+    //   detail: { positions : newPositions }
+    // }));
+  }
+
+    backtobessa()
+    {
+        document.dispatchEvent(new CustomEvent("thirdeye", {
+          detail: 
+          {
+          x : 0,
+          y : 0
+          }
+        }));
+        
+        
+    }
+  
+   render()
+   {
+     return  (
+     <div id="joyraj">
+       <div id="joyDiv" onMouseMove={this.joymosti} onMouseUp={this.backtobessa} onMouseLeave={this.backtobessa}></div>
+     </div>
+     );
+   }
+  }
 
   socket.on("receivemessage", (messages) => {
     //console.log("peyechi ekta message");
@@ -333,8 +800,8 @@ function App() {
         {
           userPlayer = {
             name : this.state.name,
-            x : 0,
-            y : 0,
+            x : 36,
+            y : 6,
             fLeft : 1,
             avatar : this.state.type
           };
@@ -343,7 +810,8 @@ function App() {
           
           ReactDOM.render(
           <div>
-            <GameBox players={[]}/>
+
+<GameBox players={[]}/>
             <Chat name={userPlayer.name}/>
           </div>,
             document.getElementById('root')

@@ -2,7 +2,7 @@
 #choosePlayer { 
     font-family: 'VT323', monospace !important;
     position: absolute;
-    background-image:url('./images/sky.jpg');
+    background-image:url(./images/sky.jpg);
 
     /* background: rgba(0,0,0,0.5);  */
     /* background: #2a84d8; */
