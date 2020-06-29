@@ -322,27 +322,77 @@ var JoyStick = (function(container, parameters)
     });
 
 /*
-
-aahar big bench
-1,38 - 13,38
-1,39 - 1,42, 13,39 - 13,42
-1,43 - 13,43
-
-aahar small bench
-0,46 - 14,46
-0,47; 14,47; 15,47; 15,48
-0,48 - 14,48
-
-aahar gol bench
-20,40 - 20,44
-20,45 - 24,45
-25,44 - 25,40
-21,40 - 24,40
-
-
-
-
-
+if (x==18 && y>=7 && y<==25)
+return false;
+if (y==25 && x<=17)
+return false;
+if (y==26 && (x==15 || x==16))
+return false;
+if (y==27 && (x==15 || x==16))
+return false;
+if ((x==1 || x==2) && y>=31 && y<=33)
+return false;
+if ((x==14 || x==15) && y>=31 && y<=33)
+return false;
+if ((y==38 || y== 43) && x>=2 && x<==13)
+return false;
+if ((x==2 || x==39) && y>=39 && y<==42)
+return false;
+if (y==46 && x<=14)
+return false;
+if (y==47 && x<=15)
+return false;
+if ((x==20 || x==25)&& y>=40 && y<=44)
+return false;
+if ((y==45 || y==40) && x>=20 && x<=24)
+return false;
+if ((y==59 || y==64) && x>=27 && x<=39)
+return false;
+if (y==7 && ((x>=18 && x<=24) || (x>47 && x<=96)))
+return false;
+if ((x==24 || x==46) && (y==8 || y==9))
+return false;
+if (y==9 && x>=25 && x<=26)
+return false;
+if (y==96 && x>=7 && x<=14)
+return false;
+if (y==49 && x>=39 && x<=59)   
+return false;
+if (x==59 && y>=39 && y<=48)
+return false;
+if ((x==39 || x==40) && y>=48 && y<=37)
+return false;
+if ((y==37 || y==34) && x>=41 && x<=49)
+return false;
+if (x>=50 && x<=56 && y>=34 && y<=37)
+return false;
+if ( (x==39 || x==40) && y>=15 && y<=34)
+return false;
+if (y==15 && x>=41 && x<=69)
+return false;
+if (x==67||x==68) && y>=22 && y<=28)
+return false;
+if (((x==60 || x==61) && y>=33 && y<=36) || (x==59 && (y==34 || y==35)))
+return false;
+if (y==49 && x>=64 && x<=93)
+return false;
+if (x>=64 && x<=69 && y>=39 && y<=48)
+return false;
+if ( x>=69 && x<=93 && y>=33 && y<=49)
+return false;
+if ( x>=69 && x<=93 && y>=15 && y<=30)
+return false;
+if (y==28 && x>=94 && x<=96)
+return false;
+if (y==27 && x>=97 && x<=110)
+return false;
+if (y==26 && x>=110 && x<=111)
+return false;
+if (y==25 && x>=112 && x<=119)
+return false;
+if (x==120 && y>=25 && y<=27)
+return false;
+if (y==27 && x>=121 && x<=133)
 */
 
 function App() {
@@ -574,21 +624,94 @@ function App() {
 
       var nx = playersChanged[i].x;
       var ny = playersChanged[i].y;
-      if(!this.checkValidPosition(nx,ny))
-      {
-        playersChanged[i].x = ox;
-        playersChanged[i].y = oy;
-      }
-      else 
+      if(this.checkValidPosition(nx,ny) & this.checkValidPosition(nx+1,ny))
       {
         this.moveCam(nx,ny);
         socket.emit("changePlayerPositions",playersChanged);
+      }
+      else 
+      {
+        playersChanged[i].x = ox;
+        playersChanged[i].y = oy;
       }
     }
 
     checkValidPosition(x,y)
     {
       if(x < 0 || y < 0 || x > 131 || y > 58)
+        return false;
+      y=y+5;
+      if (x==18 && y>=7 && y<=25)
+        return false;
+      if (y==25 && x<=17)
+        return false;
+      if (y==26 && (x==15 || x==16))
+        return false;
+      if (y==27 && (x==15 || x==16))
+        return false;
+      if ((x==1 || x==2) && y>=31 && y<=33)
+        return false;
+      if ((x==14 || x==15) && y>=31 && y<=33)
+        return false;
+      if ((y==38 || y== 43) && x>=2 && x<=13)
+        return false;
+      if ((x==2 || x==39) && y>=39 && y<=42)
+        return false;
+      if (y==46 && x<=14)
+        return false;
+      if (y==47 && x<=15)
+        return false;
+      if ((x==20 || x==25)&& y>=40 && y<=44)
+        return false;
+      if ((y==45 || y==40) && x>=20 && x<=24)
+        return false;
+      if ((y==59 || y==64) && x>=27 && x<=39)
+        return false;
+      if (y==7 && ((x>=18 && x<=24) || (x>47 && x<=96)))
+        return false;
+      if ((x==24 || x==46) && (y==8 || y==9))
+        return false;
+      if (y==9 && x>=25 && x<=26)
+        return false;
+      if (y==96 && x>=7 && x<=14)
+        return false;
+      if (y==49 && x>=39 && x<=59)   
+        return false;
+      if (x==59 && y>=39 && y<=48)
+        return false;
+      if ((x==39 || x==40) && y>=48 && y<=37)
+        return false;
+      if ((y==37 || y==34) && x>=41 && x<=49)
+        return false;
+      if (x>=50 && x<=56 && y>=34 && y<=37)
+        return false;
+      if ( (x==39 || x==40) && y>=15 && y<=34)
+        return false;
+      if (y==15 && x>=41 && x<=69)
+        return false;
+      if ((x==67||x==68) && y>=22 && y<=28)
+        return false;
+      if (((x==60 || x==61) && y>=33 && y<=36) || (x==59 && (y==34 || y==35)))
+        return false;
+      if (y==49 && x>=64 && x<=93)
+        return false;
+      if (x>=64 && x<=69 && y>=39 && y<=48)
+        return false;
+      if ( x>=69 && x<=93 && y>=33 && y<=49)
+        return false;
+      if ( x>=69 && x<=93 && y>=15 && y<=30)
+        return false;
+      if (y==28 && x>=94 && x<=96)
+        return false;
+      if (y==27 && x>=97 && x<=110)
+        return false;
+      if (y==26 && x>=110 && x<=111)
+        return false;
+      if (y==25 && x>=112 && x<=119)
+        return false;
+      if (x==120 && y>=25 && y<=27)
+        return false;
+      if (y==27 && x>=121 && x<=133)
         return false;
       return true;
     }
