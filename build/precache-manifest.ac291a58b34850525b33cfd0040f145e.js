@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "329337d3179aee356e61",
-    "url": "/static/css/main.5b14d207.chunk.css"
+    "revision": "3de7327cbe3daf8b11d7",
+    "url": "/static/css/main.75461361.chunk.css"
   },
   {
-    "revision": "329337d3179aee356e61",
-    "url": "/static/js/main.0afd11c5.chunk.js"
+    "revision": "3de7327cbe3daf8b11d7",
+    "url": "/static/js/main.40683a1d.chunk.js"
   },
   {
     "revision": "42ac5946195a7306e2a5",
@@ -22,10 +22,6 @@ self.__precacheManifest = [
   {
     "revision": "8887584da5b2eca194e8055c1cede44e",
     "url": "/static/media/doomer.8887584d.png"
-  },
-  {
-    "revision": "dc26315c13ba5986607c7f23276c1d98",
-    "url": "/static/media/game_world.dc26315c.png"
   },
   {
     "revision": "caa6b080ae4088d977d33e96153ea6ce",
@@ -48,11 +44,15 @@ self.__precacheManifest = [
     "url": "/static/media/bhakt.9614cdc1.png"
   },
   {
+    "revision": "dc26315c13ba5986607c7f23276c1d98",
+    "url": "/static/media/game_world.dc26315c.png"
+  },
+  {
     "revision": "200c943d1e19e4761519af7a2855e86c",
     "url": "/static/media/sky.200c943d.jpg"
   },
   {
-    "revision": "d1d5be9c2efcc251ec75b5ac5b13d2db",
+    "revision": "7415531358e2ff3d45ee34cfb283b2f4",
     "url": "/index.html"
   }
 ];
