@@ -3,11 +3,10 @@ import logo, { ReactComponent } from './logo.svg';
 import './App.css';
 import './welcome_screen.css';
 import ReactDOM from 'react-dom';
-import './joy.js';
 import socketIOClient from "socket.io-client";
 const ENDPOINT = "http://127.0.0.1:4001";
-const socket = socketIOClient(ENDPOINT);
-// const socket = socketIOClient();
+// const socket = socketIOClient(ENDPOINT);
+const socket = socketIOClient();
 
 
 socket.on('connect', () => {
@@ -689,7 +688,7 @@ function App() {
           <Joysticc/>
           <div id="stren">
             <div>{"People active: " + this.state.players.length}</div>
-            <div>{"Coins: " + this.state.players.length}</div>
+            {/* <div>{"Coins: " + this.state.players.length}</div> */}
           </div>
         </div>
       );

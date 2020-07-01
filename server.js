@@ -45,17 +45,18 @@ io.on("connection", (socket) => {
       id : socket.id
     });
     console.log(playersIN);
-    socket.emit("changedPlayerPositions", playersIN);
-    io.emit("receivemessage",messages);
+    io.emit("changedPlayerPositions", playersIN);
+    socket.emit("receivemessage",messages);
   });
 
   socket.on("disconnect", () => {
     var i = playersIN.findIndex((player) => player.id == socket.id);
     if(i>-1)
-     { playersIN.splice(i,1);
+     { 
+       playersIN.splice(i,1);
     io.emit("changedPlayerPositions", playersIN);
     console.log("Client"+i +" disconnected");
-     }
+    }
   });
 
   socket.on("sendmessage",(name,str) => {
