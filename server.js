@@ -46,13 +46,16 @@ io.on("connection", (socket) => {
     });
     console.log(playersIN);
     socket.emit("changedPlayerPositions", playersIN);
+    io.emit("receivemessage",messages);
   });
 
   socket.on("disconnect", () => {
     var i = playersIN.findIndex((player) => player.id == socket.id);
-    playersIN.splice(i,1);
+    if(i>-1)
+     { playersIN.splice(i,1);
     io.emit("changedPlayerPositions", playersIN);
     console.log("Client"+i +" disconnected");
+     }
   });
 
   socket.on("sendmessage",(name,str) => {
