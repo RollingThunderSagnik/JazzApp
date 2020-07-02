@@ -5,8 +5,8 @@ import './welcome_screen.css';
 import ReactDOM from 'react-dom';
 import socketIOClient from "socket.io-client";
 const ENDPOINT = "http://127.0.0.1:4001";
-const socket = socketIOClient(ENDPOINT);
-// const socket = socketIOClient();
+// const socket = socketIOClient(ENDPOINT);
+const socket = socketIOClient();
 
 
 socket.on('connect', () => {
