@@ -29,13 +29,14 @@ io.on("connection", (socket) => {
 
       // console.log(player.name == newname);
       return (player.name == newname);
-    })
+    });
     if(newname == '')
       x = 0;
     socket.emit("playerReadyToAdd",x);
   });
 
   socket.on("addplayer", (userPlayer) => {
+    socket.emit("previousPlayers",playersIN);
     playersIN.push({
       name : userPlayer.name,
       x : userPlayer.x,
@@ -45,17 +46,17 @@ io.on("connection", (socket) => {
       id : socket.id
     });
     console.log(playersIN);
-    io.emit("changedPlayerPositions", playersIN);
+    io.emit("newPlayerJoined", playersIN[playersIN.length-1]);
     socket.emit("receivemessage",messages);
   });
 
   socket.on("disconnect", () => {
     var i = playersIN.findIndex((player) => player.id == socket.id);
     if(i>-1)
-     { 
-       playersIN.splice(i,1);
-    io.emit("changedPlayerPositions", playersIN);
-    console.log("Client"+i +" disconnected");
+    { 
+        io.emit("deletePlayer", playersIN[i].name);
+        playersIN.splice(i,1);
+        console.log("Client"+i +" disconnected");
     }
   });
 
@@ -66,9 +67,26 @@ io.on("connection", (socket) => {
     io.emit("receivemessage",messages);
   });
 
-  socket.on("changePlayerPositions", (playersChanged) =>{
-    playersIN = [...playersChanged];
-    io.emit("changedPlayerPositions", playersIN);
+  socket.on("changePlayerPositions", (nplayer) =>{
+    // playersIN = [...playersChanged];
+    // io.emit("changedPlayerPositions", playersIN);
+    var x= playersIN.findIndex( (player) => {
+      // console.log(player.name + 'vs' + newname);
+
+      // console.log(player.name == newname);
+      return (player.name == nplayer.name);
+    });
+    playersIN[x]= {
+      name : nplayer.name,
+      x : nplayer.x,
+      y: nplayer.y,
+      fLeft : nplayer.fLeft,
+      avatar : nplayer.avatar,
+      id : socket.id
+    };
+
+    io.emit("changedPlayerPositions", playersIN[x]);
+
   });
 });
 

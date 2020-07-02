@@ -352,11 +352,12 @@ function App() {
     }
 
     componentDidMount(){
-      document.addEventListener('gandu',  (event) => {
-        this.setState({
-          messages : event.detail.barta
-        });
-      });
+
+      socket.on("receivemessage", (newmessages) => {
+          this.setState({
+            messages : newmessages
+          });
+      });      
     }
 
     render(){
@@ -485,11 +486,40 @@ function App() {
     }
 
     componentDidMount(){
-      document.addEventListener('updatePos',  (event) => {
-        this.setState({
-          players : event.detail.positions
-        });
+
+      socket.on("newPlayerJoined", (newplayer) => {
+          var x = this.state.players;
+          x.push(newplayer);
+          this.setState({
+            players : x
+          });
       });
+    
+      socket.on("previousPlayers", (playersIN) => {
+          this.setState({
+            players : playersIN
+          });
+      });
+    
+      socket.on("changedPlayerPositions", (nplayer) => {
+          var x= this.state.players.findIndex( (player) => {
+            return (player.name == nplayer.name);
+          });
+          this.state.players[x] = nplayer;
+          this.setState({
+            players : this.state.players
+          });
+      });
+
+
+      socket.on("deletePlayer", (outPlayer) => {
+        var i = this.state.players.findIndex((player) => player.name == outPlayer);
+        this.state.players.splice(i,1);
+        this.setState({
+          players : this.state.players
+        });
+        console.log(outPlayer);
+      }); 
 
       document.addEventListener('thirdeye',  (event) => {
         var eyex = event.detail.x + this.state.worldX;
@@ -553,7 +583,7 @@ function App() {
       if(this.checkValidPosition(nx,ny) & this.checkValidPosition(nx+1,ny))
       {
         this.moveCam(nx,ny);
-        socket.emit("changePlayerPositions",playersChanged);
+        socket.emit("changePlayerPositions",playersChanged[i]);
       }
       else 
       {
@@ -576,9 +606,7 @@ function App() {
         return false;
       if (y==27 && (x==15 || x==16))
         return false;
-      if ((x==1 || x==2) && y>=31 && y<=33)
-        return false;
-      if ((x==14 || x==15) && y>=31 && y<=33)
+      if ((x==14 || x==15 || x==1 || x==2) && y==33)
         return false;
       if (y>=38 && y<= 43 && x>=2 && x<=13)
         return false;
@@ -667,7 +695,7 @@ function App() {
       if(y < 0)
         this.state.worldY = this.state.worldY + 40;
 
-        console.log(this.state.players);
+        // console.log(this.state.players);
       this.setState({
         worldStyle : {
           top : this.state.worldY +'px',
@@ -681,7 +709,6 @@ function App() {
       var karz = this.state.players.map( (player) => <Character id={player.id} avatar={player.avatar} name={player.name} x={player.x} y={player.y} fLeft={player.fLeft} />);
       return(
         <div id="gameBox" onKeyUp={this.keyPress} tabIndex="0">
-          
           <div id="gameWorld" style={this.state.worldStyle}>
             {/* <Grid /> */}
             <div class="elem grill"></div>
@@ -695,12 +722,16 @@ function App() {
             <div class="elem goldhapi"></div>
             <div class="elem bigbench"></div>
             <div class="elem smallbench"></div>
+            <div class="elem dustbin"></div>
+            <div class="elem dustbin"></div>
+            <div class="elem higherbush"></div>
+            <div class="elem statue"></div>
 
           {karz}
           </div>
           <Joysticc/>
           <div id="stren">
-            <div>{"People active: " + this.state.players.length}</div>
+            <div>{"active: " + this.state.players.map((player) => player.name)}</div>
             {/* <div>{"Coins: " + this.state.players.length}</div> */}
           </div>
         </div>
@@ -796,20 +827,6 @@ function App() {
      );
    }
   }
-
-  socket.on("receivemessage", (messages) => {
-    //console.log("peyechi ekta message");
-    document.dispatchEvent(new CustomEvent("gandu", {
-      detail: { barta : messages }
-    }));
-  });
-
-  socket.on("changedPlayerPositions", (newPositions) => {
-    //console.log(newPositions);
-    document.dispatchEvent(new CustomEvent("updatePos", {
-      detail: { positions : newPositions }
-    }));
-  });
   /*
 
   console.log(userPlayer.name);

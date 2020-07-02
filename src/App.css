@@ -360,6 +360,38 @@
     left: 0px;
     top: 1788px;
 }
+
+.dustbin {
+    background-image: url('./images/dustbin.png');
+    width: 92px;
+    height: 152px;
+    left: 32px;
+    top: 1224px;
+    z-index: 28;
+}
+
+.dustbin:nth-child(13) {
+    left: 556px;
+}
+
+.higherbush {
+    background-image: url('./images/elemns.png');
+    width: 1240px;
+    height: 76px;
+    left: 1564px;
+    top: 584px;
+    z-index: 10;
+}
+
+.statue {
+    background-image: url('./images/statue.png');
+    width: 544px;
+    height: 556px;
+    left: 1040px;
+    top: 2040px;
+    z-index: 54;
+}
+
 /*
 aahar big bench
 1,38 - 13,38
@@ -383,10 +415,17 @@ aahar gol bench
 15,26-16,26 (y==26 && (x==15 || x==16))
 15,27-16,27 (y==27 && (x==15 || x==16))
 
+
+
+cancel this dustbin
 1,31-1,33 ((x==1 || x==2) && y>=31 && y<=33)
 2,31-2,33 
-14,31-14,33 ((x==14 || x==15) && y>=31 && y<=33)
+14,31-14,33 ((x==14 || x==15) && y==31 && y<=33)
 15,31-15,33
+
+instead this dustbin 
+14,33-15,33 ((x==14 || x==15 || x==1 || x==2) && y==33)
+1,33-2,33
  
 2,38 - 13,38 ((y==38 || y== 43) && x>=2 && x<==13)
 2,39 - 2,42 ((x==2 || x==39) && y>=39 && y<==42)
