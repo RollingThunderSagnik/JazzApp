@@ -261,6 +261,105 @@
     opacity: 1;
 }
 
+.elem {
+    display: block;
+    position: absolute;
+    background-position: top left;
+    background-size: cover;
+}
+.board {
+    background-image: url('./images/board.png');
+    width: 204px;
+    height: 232px;
+    z-index: 44;
+    left: 1560px;
+    top: 1768px;
+}
+
+.grill {
+    background-image: url('./images/grill.png');
+    width: 796px;
+    height: 80px;
+    z-index: 44;
+    left: 1568px;
+    top: 1908px;
+}
+.bera {
+    background-image: url('./images/bera.png');
+    width: 412px;
+    height: 124px;
+    z-index: 44;
+    left: 2380px;
+    top: 1520px;
+}
+
+.bush {
+    background-image: url('./images/bush.png');
+    width: 436px;
+    height: 76px;
+    z-index: 33;
+    left: 1560px;
+    top: 1464px;
+}
+
+.bush:nth-child(5) {
+    top: 1344px;
+    z-index: 30;
+}
+
+.triguna {
+    background-image: url('./images/trisex.png');
+    width: 308px;
+    height: 424px;
+    z-index: 29;
+    left: 1980px;
+    top: 1120px;
+}
+
+.chair {
+    background-image: url('./images/chair.png');
+    width: 68px;
+    height: 148px;
+    z-index: 29;
+    left: 2684px;
+    top: 868px;
+}
+
+.bridge {
+    background-image: url('./images/bridge.png');
+    width: 800px;
+    height: 392px;
+    z-index: 29;
+    left: 2872px;
+    top: 936px;
+}
+
+.goldhapi {
+    background-image: url('./images/gol_dhapi.png');
+    width: 240px;
+    height: 280px;
+    z-index: 35;
+    left: 800px;
+    top: 1548px;
+}
+
+.bigbench {
+    background-image: url('./images/big_bench.png');
+    width: 484px;
+    height: 280px;
+    z-index: 33;
+    left: 80px;
+    top: 1484px;
+}
+
+.smallbench {
+    background-image: url('./images/small\ bench.png');
+    width: 640px;
+    height: 164px;
+    z-index: 41;
+    left: 0px;
+    top: 1788px;
+}
 /*
 aahar big bench
 1,38 - 13,38

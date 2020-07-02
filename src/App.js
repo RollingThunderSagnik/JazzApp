@@ -5,8 +5,8 @@ import './welcome_screen.css';
 import ReactDOM from 'react-dom';
 import socketIOClient from "socket.io-client";
 const ENDPOINT = "http://127.0.0.1:4001";
-// const socket = socketIOClient(ENDPOINT);
-const socket = socketIOClient();
+const socket = socketIOClient(ENDPOINT);
+// const socket = socketIOClient();
 
 
 socket.on('connect', () => {
@@ -516,7 +516,7 @@ function App() {
     }
 
     keyPress(e){
-      var playersChanged = this.state.players;
+      var playersChanged = JSON.parse(JSON.stringify( this.state.players ));
       var i;
       for(i=0;i<playersChanged.length;i++)
       {
@@ -666,14 +666,15 @@ function App() {
 
       if(y < 0)
         this.state.worldY = this.state.worldY + 40;
-      
+
+        console.log(this.state.players);
       this.setState({
         worldStyle : {
           top : this.state.worldY +'px',
           left : this.state.worldX +'px'
         }
       });
-      console.log(this.state.worldX + " " + this.state.worldY);
+      // console.log(this.state.worldX + " " + this.state.worldY);
     }
 
     render(){
@@ -683,6 +684,18 @@ function App() {
           
           <div id="gameWorld" style={this.state.worldStyle}>
             {/* <Grid /> */}
+            <div class="elem grill"></div>
+            <div class="elem board"></div>
+            <div class="elem bera"></div>
+            <div class="elem bush"></div>
+            <div class="elem bush"></div>
+            <div class="elem triguna"></div>
+            <div class="elem chair"></div>
+            <div class="elem bridge"></div>
+            <div class="elem goldhapi"></div>
+            <div class="elem bigbench"></div>
+            <div class="elem smallbench"></div>
+
           {karz}
           </div>
           <Joysticc/>
