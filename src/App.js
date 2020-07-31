@@ -509,6 +509,15 @@ function App() {
           this.setState({
             players : this.state.players
           });
+        if(nplayer.name == userPlayer.name)
+        {
+          var nx = nplayer.x;
+          var ny = nplayer.y;
+          if(this.checkValidPosition(nx,ny) & this.checkValidPosition(nx+1,ny))
+          {
+            this.moveCam(nx,ny);
+          }
+        }
       });
 
 
@@ -525,16 +534,17 @@ function App() {
         var eyex = event.detail.x + this.state.worldX;
         var eyey = event.detail.y + this.state.worldY;
 
-        if(eyex >= 0 )
+        if(eyex >= 0 | eyex <= -4440)
           eyex = this.state.worldStyle.left;
         else
           eyex = eyex;
         
-        if(eyey >= 0 )
+        if(eyey >= 0 || eyey <= -1936)
           eyey = this.state.worldStyle.top;
         else
           eyey = eyey;
           
+        console.log(eyex,eyey);
         this.setState({
           worldStyle : {
             left : eyex,
@@ -582,7 +592,7 @@ function App() {
       var ny = playersChanged[i].y;
       if(this.checkValidPosition(nx,ny) & this.checkValidPosition(nx+1,ny))
       {
-        this.moveCam(nx,ny);
+        // this.moveCam(nx,ny);
         socket.emit("changePlayerPositions",playersChanged[i]);
       }
       else 
